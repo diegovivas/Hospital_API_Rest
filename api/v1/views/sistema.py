@@ -1,22 +1,25 @@
 #!/usr/bin/python3
-
+"""
+sistema despues de logeado.
+"""
 from api.v1.app import usertoken, confirm_token, app  #, mail
 from flask_mail import Message
-
 from api.v1.views import vistas
 from flask import jsonify, abort, request, send_from_directory
 from modelos import storage
 from modelos.hospital import Hospital
 from modelos.paciente import Paciente
 from modelos.medico import Medico
-
 from flask_jwt_extended import jwt_required, get_jwt_identity
-
 import datetime
 
-@vistas.route('/change_password', methods=['PUT'])
+
+@vistas.route('/change_password', methods=['POST'])
 @jwt_required
 def change_password():
+    """
+    permite cambiar el password.
+    """
     content = request.get_json()
     current_user = get_jwt_identity()
     old = content.get('old_password')
@@ -30,15 +33,18 @@ def change_password():
     usuario.save()
     return {"status": "ok"}, 200
 
-@vistas.route('/reset_password', methods=['PUT'])
+@vistas.route('/reset_password', methods=['POST'])
 def reset_password():
+    """
+    permite reiniciar el password
+    """
     content = request.get_json()
     usuario = storage.getbymail(content.get('correo'))
     access_token =  str(usertoken(hospital.correo))
     mail = 'http://0.0.0.0:5000/api/v1/reset/' + access_token
     return {"status": mail}
 
-@vistas.route('/reset', methods=['PUT'])
+@vistas.route('/reset', methods=['GET', 'PUT'])
 def reset():
     try:
         email = confirm_token(token)
@@ -55,9 +61,13 @@ def reset():
         return jsonify({"error":"link no valido"}), 400
 
     
-@vistas.route('/registrar_medico', methods = ['POST'])
+@vistas.route('/registrar_medico', methods = ['PUT'])
 @jwt_required
 def registrar_medico():
+    """
+    permite a un hospital registrar un 
+    medico.
+    """
     content = request.get_json()
     usuario = get_jwt_identity()
     autorizacion = storage.es_hospital(usuario)
@@ -74,6 +84,10 @@ def registrar_medico():
 @vistas.route('/registrar_observacion', methods = ['POST'])
 @jwt_required
 def registrar_observacion():
+    """
+    permite a un medico registrar una
+    observacion de un paciente.
+    """
     content = request.get_json()
     usuario = get_jwt_identity()
     autorizacion = storage.es_medico(usuario)
@@ -87,19 +101,29 @@ def registrar_observacion():
     medico.registrar_observacion(formulario)
     return {"status": "observacion registrada"}
 
-@vistas.route('/consultar/', methods = ['GET'])
-def consultar_observaciones(id):
+@vistas.route('/consultar', methods = ['GET'])
+@jwt_required
+def consultar_observaciones():
+    """
+    permite a un usuario consultar
+    registros permitidos.
+    """
     observaciones = {}
     id_usuario = get_jwt_identity()
     usuario = storage.getbyid(id_usuario)
     observaciones = usuario.registro()
     if len(observaciones) > 0:
-        return jsonify(observaciones), 200
+        return jsonify(observaciones), 201
     else:
         return {"status":"No tiene registros guardados"}, 201
     
 @vistas.route("/descargar_consulta/<paciente_id>")
+@jwt_required
 def get_csv(paciente_id):
+    """
+    permite a un medico descargar
+    registros de un paciente.
+    """
     usuario = get_jwt_identity()
     autorizacion = storage.es_medico(usuario)
     if not autorizacion:

@@ -1,5 +1,7 @@
 #!/usr/bin/python3
-
+"""
+clase medico hereda de BaseModel y Base
+"""
 
 import modelos
 from modelos.base_model import BaseModel, Base
@@ -13,12 +15,21 @@ import csv
  
 
 class Medico(BaseModel, Base):
+    """
+    atributos y metodos de la clase Medico.
+    """
     __tablename__ = 'medicos'
     especialidad = Column(String(60))
     hospital_id = Column(String(60), ForeignKey('hospitales.id'), nullable="False")
     observaciones = relationship("Observacion", backref="medico_")
     
     def registrar_observacion(self, formulario):
+        """
+        registra observacion de un paciente recibe
+        como parametro formulario, que es un 
+        diccionario con las claves, paciente_id
+        y registro.
+        """
         registro = {}
         hospital = modelos.storage.getbyid(self.hospital_id)
         registro['paciente_id'] = formulario.get('paciente_id')
@@ -35,6 +46,10 @@ class Medico(BaseModel, Base):
         
         
     def registro(self):
+        """
+        retorna una lista con los registros
+        que ha realizado el medico.
+        """
         registros =  modelos.storage.query_registros()
         registros_propios = []
         for registro in registros:
@@ -43,9 +58,14 @@ class Medico(BaseModel, Base):
         return registros_propios
 
     def descargar_registro(self, paciente_id):
+        """
+        guarda un registro en formato csv para que 
+        el metodo de flask pueda retornarlo a partir 
+        de su ubicacion en el disco, retorna el nombre
+        del archivo.
+        """
         paciente = modelos.storage.getbyid(paciente_id)
         registros = paciente.registro()
-        print(registros)
         n_registro = paciente.id + ".csv" 
         with open(n_registro, 'w') as f:
             writer = csv.writer(f)

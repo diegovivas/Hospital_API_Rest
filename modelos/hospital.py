@@ -1,5 +1,7 @@
 #!/usr/bin/python3
-
+"""
+clase Hospital hereda de BaseModel
+"""
 
 import modelos
 from modelos.base_model import BaseModel, Base
@@ -8,6 +10,7 @@ from sqlalchemy.orm import Session, relationship
 from sqlalchemy.ext.declarative import declarative_base
 import sqlalchemy as db
 
+#tabla para relacion many to many con servicios.
 servicios_hospital = Table('servicios_hospital', Base.metadata,
                           Column('hospital_id', String(60),
                                  ForeignKey('hospitales.id', onupdate='CASCADE',
@@ -19,6 +22,9 @@ servicios_hospital = Table('servicios_hospital', Base.metadata,
                                  primary_key=True))
 
 class Hospital(BaseModel, Base):
+     """
+     atributos y metodos de la clase Hospital.
+     """
      __tablename__ = 'hospitales'
      medicos = relationship("Medico", backref="hospital_med")
      medico_observaciones = relationship("Observacion", backref="hospital_ob")
@@ -27,6 +33,9 @@ class Hospital(BaseModel, Base):
                              backref="hospital", viewonly=False)
     
      def registro(self):
+          """
+          busca un registro a partir del objeto.
+          """
           registros =  modelos.storage.query_registros()
           registros_propios = []
           for registro in registros:

@@ -1,5 +1,8 @@
 #!/usr/bin/python3
-
+"""
+inicializa una instancia de Flask
+y se encarga del API REST
+"""
 from flask import Flask, make_response, jsonify
 from modelos import storage
 from modelos.base_model import BaseModel, Base
@@ -17,7 +20,7 @@ app = Flask(__name__)
 
 cors = CORS(app, resources={r"/*": {"origins":"0.0.0.0"}})
 app.config['SECRET_KEY'] = 't1NP63m4wnBg6nyHYKfmc2TpCOGI4nss'
-app.config['SECURITY_PASSWORD_SALT'] = 'my_precious_two'
+app.config['SECURITY_PASSWORD_SALT'] = 'apis_por_doquier'
 app.config["CLIENT_CSV"] = "./"
 app.url_map.stric_slashes = False
 app.register_blueprint(vistas)
@@ -37,11 +40,20 @@ app.config.update(dict(
 
 mail = Mail(app)
 """
+
+
 def usertoken(email):
+    """
+    crea el token para autenticarse por mail. 
+    """
     s = Serializer(app.config['SECRET_KEY'], salt=app.config['SECURITY_PASSWORD_SALT'])
     return s.dumps(email, salt=app.config['SECURITY_PASSWORD_SALT'])
 
+
 def confirm_token(token, expiration=3600):
+    """
+    verifica si el token es valido.
+    """
     serializer = Serializer(app.config['SECRET_KEY'])
     try:
         email = serializer.loads(
@@ -53,9 +65,10 @@ def confirm_token(token, expiration=3600):
         return False
     return email
 
+
 @app.teardown_appcontext
 def teardown_appcontext(self):
-    """ close storage """
+    """ cierra storage """
     storage.close()
 
 @app.errorhandler(404)
@@ -64,7 +77,6 @@ def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
 
 if __name__ == '__main__':
-    
-    host = os.getenv("HBNB_API_HOST", '0.0.0.0')
-    port = os.getenv("HBNB_API_PORT", 5000)
+    host = os.getenv("API_HOST", '0.0.0.0')
+    port = os.getenv("API_PORT", 5000)
     app.run(host, port, threaded=True)

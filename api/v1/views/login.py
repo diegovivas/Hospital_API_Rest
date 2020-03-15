@@ -1,5 +1,8 @@
 #!/usr/bin/python3
-
+"""
+login para permitir acceso al sistema
+de un usuario.
+"""
 from api.v1.app import usertoken, confirm_token  #, mail
 from flask_mail import Message
 
@@ -25,8 +28,7 @@ def login():
         return {'error': 'Usuario o password invalidos'}, 401
     if not usuario.activo:
         return {'error': 'Debes confirmar tu registro primero'}, 401
-    
-    expires = datetime.timedelta(days=1)
+    expires = datetime.timedelta(days=7)
     access_token = create_access_token(identity=str(usuario.id), expires_delta=expires)
     return jsonify({str(usuario.__class__.__name__): access_token})
 

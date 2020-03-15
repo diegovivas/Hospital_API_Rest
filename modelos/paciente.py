@@ -1,5 +1,7 @@
 #!/usr/bin/python3
-
+"""
+clase paciente hereda de BaseModel y Base
+"""
 
 import modelos
 from modelos.base_model import BaseModel, Base
@@ -11,12 +13,18 @@ from datetime import datetime
 
 
 class Paciente(BaseModel, Base):
+    """
+    atributos y metodos de la clase Paciente.
+    """
     __tablename__ = 'pacientes'
     fecha_nacimiento = Column(String(60))
     hospital_id = Column(String(60), ForeignKey('hospitales.id'), nullable="False")
     observaciones = relationship("Observacion", backref="paciente")
     
     def registro(self):
+        """
+        busca y retorna los registros de ese especifico usuario.
+        """
         registros =  modelos.storage.query_registros()
         registros_propios = []
         for registro in registros:

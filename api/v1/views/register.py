@@ -1,5 +1,8 @@
 #!/usr/bin/python3
-
+"""
+se encuentran las clases encargadas
+de registrar y confirmar un usuario.
+"""
 from api.v1.app import usertoken, confirm_token  #, mail
 from flask_mail import Message
 
@@ -12,6 +15,11 @@ from modelos.medico import Medico
 
 @vistas.route('/register', methods = ['POST'])
 def sing_up():
+    """
+    crea una instancia de un usuario
+    dependiendo de su tipo y la guarda
+    en la base de datos.
+    """
     content = request.get_json()
     if content['usuario'] == 'hospital':
         hospital = Hospital(**content['formulario'])
@@ -37,6 +45,9 @@ def sing_up():
 
 @vistas.route('/confirmar/<token>')
 def confirmar(token):
+    """
+    funcion para verificar un registro por email.
+    """
     try:
         email = confirm_token(token)
     except:

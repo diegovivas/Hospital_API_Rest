@@ -1,4 +1,8 @@
 #!/usr/bin/python3
+"""
+Clase Observaciones hereda de Base.
+"""
+
 import modelos
 from modelos.base_model import Base
 from sqlalchemy import MetaData, Table, Column, String, Integer, ForeignKey
@@ -7,6 +11,9 @@ from sqlalchemy.ext.declarative import declarative_base
 import sqlalchemy as db
 
 class Observacion(Base):
+     """
+     metodos y atributos de la clase Observaciones.
+     """
      __tablename__ = 'observaciones'
      id = Column(String(60), primary_key=True)
      hospital = Column(String(60))
@@ -18,6 +25,10 @@ class Observacion(Base):
      paciente_id = Column(String(60), ForeignKey('pacientes.id'), nullable="False")
 
      def to_dict(self):
+          """
+          retorna un diccionario a partir del objeto,
+          con los atributos requeridos para consultar.
+          """
           new_dict = {}
           new_dict["hospital"] = self.hospital
           new_dict["medico"] = self.medico

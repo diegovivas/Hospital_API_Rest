@@ -1,5 +1,8 @@
 #!/usr/bin/python3
-
+"""
+Clase Database encargada de gestionar
+todos los elementos en la base de datos.
+"""
 import sqlalchemy as db
 from sqlalchemy.orm import scoped_session, sessionmaker
 import modelos
@@ -22,14 +25,27 @@ class Database:
 
 
     def __init__(self):
+        """
+        inicializa la base de datos.
+        """
         self.__engine = db.create_engine('postgresql://postgres:passwd@localhost/API_REST_HOSPITAL')
-        print("DB instance created")
+        print("DB instancia creada")
         
     def agregar(self, obj):
+        """
+        agrega objetos a la base de datos.
+        """
         self.__session.add(obj)
 
     
     def query(self, query):
+        """
+        trae las tablas en la base de datos y las
+        convierte en objetos que son almacenados
+        como valores en un diccionario, este es
+        el que se retorna al final con las id
+        de los objetos como claves.
+        """
         objects = {}
         queri = eval(query)
         for row in self.__session.query(queri).all():
@@ -38,6 +54,10 @@ class Database:
         return objects
     
     def querymail(self, query):
+        """
+        hace lo mismo que query pero guarda
+        las claves con los correos de cada objeto.
+        """
         objects = {}
         queri = eval(query)
         for row in self.__session.query(queri).all():
@@ -46,9 +66,15 @@ class Database:
         return objects
     
     def query_registros(self):
+        """
+        retorna todos los registros.
+        """
         return self.__session.query(Observacion).all()
         
     def getbyid(self, id):
+        """
+        retorna u objeto a partir de su id.
+        """
         objects = {}
         for element in ["Hospital", "Medico", "Paciente"]:
             objects = self.query(element)
@@ -57,31 +83,45 @@ class Database:
         return objects
 
 
-    def getbymail(self, id):
+    def getbymail(self,mail):
+        """
+        retorna un objeto a partir de su mail.
+        """
         objects = {}
         for element in ["Hospital", "Medico", "Paciente"]:
             objects = self.querymail(element)
             if id in objects:
-                return objects[id]
+                return objects[mail]
         return objects
     
     def es_hospital(self, id):
+        """
+        verifica si un objeto es de tipo Hospital.
+        """
         usuario = self.getbyid(id)
         if "Hospital" in str(usuario.__class__):
             return True
         return False
     
     def es_medico(self, id):
+        """
+        verifica si un objeto es de tipo Medico.
+        """
         usuario = self.getbyid(id)
         if "Medico" in str(usuario.__class__):
             return True
         return False
 
     def save(self):
+        """
+        guarda la session pasa la base de datos.
+        """
         self.__session.commit()
 
     def reload(self):
-        """reloads data from the database"""
+        """
+        carda los datos de la base de datos.
+        """
         Base.metadata.create_all(self.__engine)
         sess_factory = sessionmaker(bind=self.__engine, expire_on_commit=False)
         Session = scoped_session(sess_factory)
@@ -93,11 +133,3 @@ class Database:
         """
         self.__session.remove()
 
-    def get(self, cls, id):
-        """return an object by id and class name from storage"""
-        name_of_object = cls + "." + id
-        objects = self.all(cls)
-        if name_of_object in objects:
-            return objects[name_of_object]
-        else:
-            return None

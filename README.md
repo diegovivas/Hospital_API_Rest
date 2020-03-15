@@ -10,7 +10,7 @@ Servicio web (API REST), que sirve de endpoints para un sistema de gestion de hi
 * Base de datos:
   * `/modelos/engine/dbstorage.py`
   * configurar el metodo `__init__` en la linea `self.__engine = db.create_engine('postgresql://usuario:password@localhost/API_REST_HOSPITAL')`,
-  poner su usario y password de postgres
+  poner su usuario y password de Postgres.
   
 * Dependencias:
 

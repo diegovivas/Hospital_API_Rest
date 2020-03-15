@@ -1,5 +1,7 @@
 #!/usr/bin/python3
-
+"""
+Clase Base con todos los atributos principales.
+"""
 
 import modelos
 from sqlalchemy import MetaData, Table, Column, String, Integer, Boolean
@@ -9,10 +11,13 @@ import sqlalchemy as db
 from datetime import datetime
 from flask_bcrypt import generate_password_hash, check_password_hash
 
-
+#base declarativa para sqlalchemy
 Base = declarative_base()
 
 class BaseModel:
+    """
+    atributos y funciones principales
+    """
     id = Column(String(60), primary_key=True)
     correo = Column(String(60), unique=True)
     telefono = Column(Integer)
@@ -22,6 +27,10 @@ class BaseModel:
     activo = Column(Boolean, unique=False, default=False)
     
     def __init__(self, *args, **kwargs):
+        """
+        inicializa las instancia de la clase
+        a partir de un diccionario.
+        """
         if kwargs:
              for key, value in kwargs.items():
                 if key != "__class__":
@@ -31,11 +40,21 @@ class BaseModel:
 
 
     def hash_password(self):
+        """
+        genera un password encriptado.
+        """
         self.password = generate_password_hash(self.password).decode('utf8')
 
     def check_password(self, password):
+        """
+        verifica si el password es correcto a partir
+        de un hash.
+        """
         return check_password_hash(self.password, password)
 
     def save(self):
+        """
+        guarda el objeto en la base de datos.
+        """
         modelos.storage.agregar(self)
         modelos.storage.save()
