@@ -106,7 +106,7 @@ Servicio web (API REST), que sirve de endpoints para un sistema de gestion de hi
 
 Cada que un usuario hace login y este es exitoso la api retorna un token
 que se debe enviar en los headers como:
-   `"Authorization: Bearer token"
+   `"Authorization: Bearer token"`
 todos los metodos que siguen acontinuacion utilizan este token para funcionar.
 
    * Registrar medicos: Solo los usuarios de tipo Hospital pueden registrar
