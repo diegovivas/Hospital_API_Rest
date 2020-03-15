@@ -27,6 +27,9 @@ Servicio web (API REST), que sirve de endpoints para un sistema de gestion de hi
    * `/api/v1`: Se encuentra el modulo app.py en el que se inicia la API, y se
    conecta con todas las Blueprints y metodos de la API.
 
+## Ejecutar
+
+   * En Linux Desde la carpeta root del proyecto ejecutar `python3 -m api.v1.app`
 
 ## Metodos
 
