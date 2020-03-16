@@ -42,10 +42,19 @@ class Database:
         """
         agrega servicios a la base de datos
         """
+        lista_agregados = []
+        servicios_actuales = self.queryservicios()
+        for servicio in servicios_actuales:
+            if servicio.servicio in servicios:
+                hospital.servicios.append(servicio)
+                lista_agregados.append(servicio.servicio)
         for servicio in servicios:
-            n_servicio = Servicio(servicio=servicio)
-            self.__session.add(n_servicio)
-            hospital.servicios.append(n_servicio)
+            if servicio in lista_agregados:
+                pass
+            else:
+                n_servicio = Servicio(servicio=servicio)
+                self.__session.add(n_servicio)
+                hospital.servicios.append(n_servicio)
 
     def verificar_id(self, usuario_id):
         """
@@ -85,6 +94,9 @@ class Database:
         return objects
     
     def queryservicios(self):
+        """
+        retorna una lista con todos los servicios
+        """
         return self.__session.query(Servicio).all()
     
     def querymail(self, query):
