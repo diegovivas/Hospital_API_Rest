@@ -18,7 +18,10 @@ Servicio web (API REST), que sirve de endpoints para un sistema de gestion de hi
   * Para instalar todos los paquetes de python necesarios para correr la api, recomiendo crear un entorno virtual
   `python3 -m venv nombredelentorno` y puego `source /nombredelentorno/bin/activate`
   * luego dentro del entorno ejecutar `pip install -r requirements.txt`
-
+  * variables de entorno: para poder enviar los correos de confirmacion, es
+  necesario ajustar las variables de entorno con `mail=correoqueenvia`
+  y `password=passworddelcorreo`
+  
 ## modulos y archivos
 
    * `/modelos`: En este paquete se encuentran declaradas todas las clases usadas en la api.

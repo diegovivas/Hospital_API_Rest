@@ -12,7 +12,7 @@ from flask_cors import CORS
 import os
 from flask_jwt_extended import JWTManager
 from itsdangerous import URLSafeTimedSerializer as Serializer
-#from flask_mail import Mail
+from flask_mail import Mail
 from flask_bcrypt import Bcrypt
 
 app = Flask(__name__)
@@ -27,19 +27,18 @@ app.register_blueprint(vistas)
 jwt = JWTManager(app)
 
 bcrypt = Bcrypt(app)
-"""
 app.config.update(dict(
     DEBUG = True,
     MAIL_SERVER = 'smtp.gmail.com',
     MAIL_PORT = 587,
     MAIL_USE_TLS = True,
     MAIL_USE_SSL = False,
-    MAIL_USERNAME = 'diego.rolando.vivas.dv@gmail.com',
-    MAIL_PASSWORD = '',
+    MAIL_USERNAME = os.getenv('mail'),
+    MAIL_DEFAULT_SENDER = os.getenv('mail'),
+    MAIL_PASSWORD = os.getenv('password'),
 ))
 
 mail = Mail(app)
-"""
 
 
 def usertoken(email):

@@ -3,7 +3,7 @@
 se encuentran las clases encargadas
 de registrar y confirmar un usuario.
 """
-from api.v1.app import usertoken, confirm_token  #, mail
+from api.v1.app import usertoken, confirm_token, mail
 from flask_mail import Message
 
 from api.v1.views import vistas
@@ -28,6 +28,7 @@ def sing_up():
     if not storage.verificar_id(usuario_id):
             return jsonify({"error": "id invalido"}), 401
     correo = content.get('formulario').get('correo')
+    msg = Message(recipients=[correo])
     if not storage.verificar_correo(correo):
             return jsonify({"error": "correo invalido"}), 401
     servicios = content.get("servicios")
@@ -55,8 +56,12 @@ def sing_up():
         mail_confirm = mail_confirm + sk
     else:
         return jsonify({"error":"usuario incorrecto"}), 400
-    
-    return jsonify({"status":mail_confirm})
+    texto_mensaje = "<p>Hola gracias por registrarte<p></br>"
+    texto_mensaje += '<a href="'+mail_confirm+'">Confirma tu registro.</a></br>'
+    msg.subject = "Confirmar registro"
+    msg.html = texto_mensaje
+    mail.send(msg)
+    return jsonify({"status":"OK"}), 201
 
 @vistas.route('/confirmar/<token>')
 def confirmar(token):
