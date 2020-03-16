@@ -11,6 +11,7 @@ from sqlalchemy.ext.declarative import declarative_base
 import sqlalchemy as db
 from modelos.observaciones import Observacion
 from modelos.paciente import Paciente
+from uuid import uuid4, UUID
 import csv
  
 
@@ -39,7 +40,7 @@ class Medico(BaseModel, Base):
         registro['medico_id'] = self.id
         registro['medico'] = self.nombre
         registro['hospital'] = hospital.nombre
-        registro['id'] = self.hospital_id + formulario.get('paciente_id')
+        registro['id'] = str(uuid4())
         observacion = Observacion(**registro)
         modelos.storage.agregar(observacion)
         modelos.storage.save()

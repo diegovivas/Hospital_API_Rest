@@ -20,7 +20,7 @@ class BaseModel:
     """
     id = Column(String(60), primary_key=True)
     correo = Column(String(60), unique=True)
-    telefono = Column(Integer)
+    telefono = Column(String(60))
     password = Column(String(60))
     nombre = Column(String(60))
     direccion = Column(String(60))
@@ -33,7 +33,7 @@ class BaseModel:
         """
         if kwargs:
              for key, value in kwargs.items():
-                if key != "__class__":
+                if key != "__class__" and key != "activo":
                     setattr(self, key, value)
         else:
             pass

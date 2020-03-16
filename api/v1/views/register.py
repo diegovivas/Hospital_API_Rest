@@ -21,16 +21,31 @@ def sing_up():
     en la base de datos.
     """
     content = request.get_json()
-    if content['usuario'] == 'hospital':
+    if content is None:
+            abort(400, 'Not es un JSON')
+    usuario = content.get("usuario")
+    usuario_id = content.get('formulario').get('id')
+    if not storage.verificar_id(usuario_id):
+            return jsonify({"error": "id invalido"}), 401
+    correo = content.get('formulario').get('correo')
+    if not storage.verificar_correo(correo):
+            return jsonify({"error": "correo invalido"}), 401
+    servicios = content.get("servicios")
+    if usuario == 'hospital':
+        if len(servicios) < 1:
+            return jsonify({"error": "debe registrar servicios"}), 401
         hospital = Hospital(**content['formulario'])
         hospital.hash_password()
         storage.agregar(hospital)
+        storage.agregar_servicios(servicios, hospital)
         storage.save()
         mail_confirm = 'http://0.0.0.0:5000/api/v1/confirmar/'
         sk = str(usertoken(hospital.correo))
         mail_confirm = mail_confirm + sk
         
-    elif content['usuario'] == 'paciente':
+    elif usuario == 'paciente':
+        if len(content.get('formulario').get('fecha_nacimiento')) < 1:
+            return jsonify({"error": "debe poner fecha de nacimientoo"}), 401
         paciente = Paciente(**content['formulario'])
         paciente.hash_password()
         storage.agregar(paciente)
@@ -53,9 +68,16 @@ def confirmar(token):
     except:
         pass
     usuario = storage.getbymail(email)
+    print(email)
+    usuario.activo = True
+    usuario.save()
+    return jsonify({"status": "OK"})
+
+"""
     try:
         usuario.activo = True
         usuario.save()
         return jsonify({"status": "OK"})
     except:
         return jsonify({"error":"link no valido"}), 400
+"""

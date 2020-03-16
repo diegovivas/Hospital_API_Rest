@@ -12,6 +12,7 @@ from modelos.servicios import Servicio
 from modelos.medico import Medico
 from modelos.observaciones import Observacion
 from modelos.paciente import Paciente
+from modelos.servicios import Servicio
 
 """
 from modelos.medico import Medico, paciente, observaciones
@@ -36,7 +37,37 @@ class Database:
         agrega objetos a la base de datos.
         """
         self.__session.add(obj)
+        
+    def agregar_servicios(self, servicios, hospital):
+        """
+        agrega servicios a la base de datos
+        """
+        for servicio in servicios:
+            n_servicio = Servicio(servicio=servicio)
+            self.__session.add(n_servicio)
+            hospital.servicios.append(n_servicio)
 
+    def verificar_id(self, usuario_id):
+        """
+        verifica si el uid ya existe.
+        """
+        if len(usuario_id) < 1 or not usuario_id:
+            return False
+        usuario = self.getbyid(usuario_id)
+        if type(usuario) != dict:
+                return False
+        return True
+    
+    def verificar_correo(self, correo):
+        """
+        verifica si el correo ya existe.
+        """
+        if len(correo) < 1 or not correo:
+            return False
+        correo = self.getbymail(correo)
+        if type(correo) != dict:
+                return False
+        return True
     
     def query(self, query):
         """
@@ -52,6 +83,9 @@ class Database:
             key = str(row.id)
             objects[key] = row
         return objects
+    
+    def queryservicios(self):
+        return self.__session.query(Servicio).all()
     
     def querymail(self, query):
         """
@@ -90,7 +124,7 @@ class Database:
         objects = {}
         for element in ["Hospital", "Medico", "Paciente"]:
             objects = self.querymail(element)
-            if id in objects:
+            if mail in objects:
                 return objects[mail]
         return objects
     
